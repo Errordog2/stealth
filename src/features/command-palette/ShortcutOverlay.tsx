@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Keyboard, Search, Slash } from "lucide-react";
+import { Keyboard, Search, Slash, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SHORTCUT_DEFINITIONS } from "./shortcuts";
 
@@ -82,16 +82,29 @@ export function ShortcutOverlay({ open, onClose }: Props) {
                   autoFocus
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  placeholder="Search shortcuts, commands, or conflict notes…"
+                  placeholder="Search shortcuts, commands, or conflict notes..."
                   className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none"
                 />
+                {query && (
+                  <button
+                    type="button"
+                    onClick={() => setQuery("")}
+                    className="rounded-md border border-white/10 bg-black/25 p-1 text-muted-foreground transition hover:bg-white/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+                    aria-label="Clear shortcut search"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
               </div>
             </div>
 
             <div className="max-h-[58vh] overflow-y-auto px-3 py-3">
               {shortcuts.length === 0 ? (
-                <div className="px-3 py-10 text-center text-sm text-muted-foreground">
-                  No shortcuts match “{query}”.
+                <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.025] px-4 py-10 text-center">
+                  <p className="text-sm font-medium text-foreground">No matching shortcuts</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Try a command, key, or conflict note for "{query}".
+                  </p>
                 </div>
               ) : (
                 <ul className="space-y-2">
@@ -133,6 +146,11 @@ export function ShortcutOverlay({ open, onClose }: Props) {
             </div>
 
             <div className="flex flex-wrap items-center gap-3 border-t border-white/8 px-5 py-3 text-[11px] text-muted-foreground">
+              <span className="mr-auto">
+                {query
+                  ? `${shortcuts.length} shortcut${shortcuts.length === 1 ? "" : "s"}`
+                  : "Shortcuts ready"}
+              </span>
               <Hint keyLabel="?">Open help</Hint>
               <Hint keyLabel="Ctrl/Cmd K">Search commands</Hint>
               <Hint keyLabel="Esc">Close</Hint>
